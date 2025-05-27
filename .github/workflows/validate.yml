@@ -1,0 +1,33 @@
+name: Validar Arquiteto
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Validar Markdown
+      uses: DavidAnson/markdownlint-cli2-action@v9
+      with:
+        globs: '**/*.md'
+    
+    - name: Verificar Links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+    
+    - name: Validar Estrutura
+      run: |
+        echo "Verificando estrutura de pastas..."
+        test -d "system-prompts" || exit 1
+        test -d "knowledge-base" || exit 1
+        test -d "templates" || exit 1
+        test -d "projects" || exit 1
+        echo "✅ Estrutura válida"
